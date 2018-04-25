@@ -92,9 +92,10 @@ app.use('/api', jsonParser, function (req, res){
 
 
 // Home page, default route
+
 /*
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile(path.join(__dirname + '.dist/index.html'));
 });
 */
 //app.use(express.static(path.join(__dirname, './dist')));
