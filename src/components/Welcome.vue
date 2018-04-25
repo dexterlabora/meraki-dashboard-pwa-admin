@@ -2,14 +2,14 @@
   <v-layout>
     <v-flex xs12 sm6 offset-sm3>
     <v-card class="lic-card">
-      <v-card-media height="100px">
-        <v-card-text class="text-xs-center">
-          <img src="/static/img/solutions_graphic_white.png" alt="logo"/>
-        </v-card-text>
+      <v-card-media
+          class="white--text"
+          height="300px"
+          src="/static/img/solutions_graphic_white.png"
+      >
       </v-card-media>
-      <v-card-title primary-title>
-        
-          <h3 class="headline mb-0">Welcome!</h3>
+      <v-card-title primary-title>  
+          <h3 class="headline">Welcome!</h3>
           <v-flex sm12>
             <p class="text-xs-left">
               <p>Use this app to manage your network with the Meraki API.</p>
