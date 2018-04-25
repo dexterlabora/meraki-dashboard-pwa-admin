@@ -25,6 +25,7 @@ var express = require('express');
 //var request = require('request'); // Does not properly handle Meraki redirects
 var requestMeraki = require('./request-meraki');
 var path = require('path');
+var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 
 var app = module.exports = express();
