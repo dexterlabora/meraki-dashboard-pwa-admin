@@ -1,7 +1,7 @@
 {
   "name": "vue-pwa",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "A Meraki Dashboard API Demo using VueJS PWA",
   "author": "Cory Guynn",
   "private": true,
   "scripts": {
