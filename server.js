@@ -97,7 +97,8 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 */
-app.use(express.static(path.join(__dirname, './dist')));
+//app.use(express.static(path.join(__dirname, './dist')));
+app.use('/',express.static('dist'));
 
 // Start server
 var port = process.env.PORT || 8088;
