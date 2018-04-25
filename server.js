@@ -55,7 +55,7 @@ globalLog.on('error', function(request, response) {
 var jsonParser = bodyParser.json();
 
 // API Route - Will be proxied through Meraki Dashboard API
-app.use(history());
+
 app.use('/api', jsonParser, function (req, res){
   console.log('API request ', req.url);
   console.log('request body, ', req.body);
@@ -101,6 +101,7 @@ app.get('/', function(req, res) {
 });
 */
 //app.use(express.static(path.join(__dirname, './dist')));
+app.use(history());
 app.use(serveStatic(__dirname + "/dist"));
 
 // handle every other route with index.html, which will contain
