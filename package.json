@@ -25,7 +25,12 @@
     "vue2-datatable-component": "^2.2.2",
     "vuetify": "^1.0.3",
     "vuex": "^3.0.1",
-    "vuex-persistedstate": "^2.4.2"
+    "vuex-persistedstate": "^2.4.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "foreman": "2.0.0",
+    "global-request-logger": "^0.1.1",
+    "morgan": "^1.9.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",
