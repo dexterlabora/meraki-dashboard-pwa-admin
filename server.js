@@ -99,7 +99,7 @@ app.get('/', function(req, res) {
 });
 */
 //app.use(express.static(path.join(__dirname, './dist')));
-app.use('/', express.static(path.join(__dirname, 'dist')));
+app.use(serveStatic(__dirname + "/dist"));
 
 // Start server
 var port = process.env.PORT || 8088;
