@@ -9,47 +9,34 @@
         <v-icon>lock</v-icon>
       </v-btn>
       <v-card>
-        <v-list>
-          <v-list-tile avatar>
-            <v-list-tile-content>
-              <v-list-tile-title>Settings</v-list-tile-title>
-              <v-list-tile-sub-title><i>Only saved in browser</i></v-list-tile-sub-title>
-            </v-list-tile-content>
-            <v-list-tile-action>
-              <!--v-btn
-                icon
-                :class="fav ? 'red--text' : ''"
-                @click="fav = !fav"
-              >
-                <v-icon>favorite</v-icon>
-              </v-btn-->
-            </v-list-tile-action>
-          </v-list-tile>
-        </v-list>
+
+        <v-card-title>Admin Settings</v-card-title>
         <v-divider></v-divider>
-        <v-list class="mt-2">
-          <v-list-tile>
-            <v-list-tile-sub-title>
-              <v-text-field
-              name="apiKey"
-              label="API KEY"
-              id="apiKey"
-              v-model="form.apiKey"
-              ></v-text-field>
-            </v-list-tile-sub-title>
-          </v-list-tile>
-         
-          <v-list-tile class="mt-2">
-            <v-list-tile-sub-title>
-              <v-checkbox
-                label="Admin Mode"
-                v-model="form.adminMode"
-              ></v-checkbox>
-            </v-list-tile-sub-title>
-          </v-list-tile>
-        </v-list>
+        <v-card-text>
+          <i>Changes saved in browser storage</i>
+          <v-list class="mt-2">
+            <v-list-tile>
+              <v-list-tile-sub-title>
+                <v-text-field
+                name="apiKey"
+                label="API KEY"
+                id="apiKey"
+                v-model="form.apiKey"
+                ></v-text-field>
+              </v-list-tile-sub-title>
+            </v-list-tile>
+          
+            <v-list-tile class="mt-2">
+              <v-list-tile-sub-title>
+                <v-checkbox
+                  label="Admin Mode"
+                  v-model="form.adminMode"
+                ></v-checkbox>
+              </v-list-tile-sub-title>
+            </v-list-tile>
+          </v-list>
+        </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
           <v-btn flat @click="menu = false">Cancel</v-btn>
           <v-btn color="primary" flat @click="saveSettings()">Save</v-btn>
         </v-card-actions>
