@@ -2,17 +2,6 @@
 
   <v-container>
   <v-layout row>
-      <v-snackbar
-          :timeout="3000"
-          top
-          multi-line
-          :color="snackbar.color"
-          v-model="snackbar.active"
-          >
-          <h3>{{ snackbar.status }}</h3>
-          {{ snackbar.text }}
-          <v-btn flat color="white" @click.native="snackbar.active = false">Close</v-btn>
-      </v-snackbar>
       <v-btn fab fixed bottom right dark color="orange" @click="updateSsid()">
         <v-icon dark>check</v-icon>         
       </v-btn>
@@ -178,16 +167,7 @@
 export default {
   data: function() {
     return {
-      snackbar: {
-        active: false,
-        color: "",
-        mode: "",
-        text: "Save changes?"
-      },
-      alert: {
-        display: false,
-        text: "Updated"
-      },
+      ssidNum: 0,
       ssid: {},
       ssids: [],
       ssidForm: [],
@@ -233,67 +213,41 @@ export default {
   },
   watch: {
     net: function() {
-      this.fetchSsids();
+      this.ssids = [];
+      this.ssid = {};
+      if (this.net.type != ("wireless" || "combined")) {
+        //this.notify('error', 'Not a wireless network')
+        return;
+      } else {
+        this.fetchSsids();
+      }
     },
     ssid: function() {
-      this.ssidForm = Object.assign({}, this.ssid); //copy the ssid into the form
+      //copy the ssid into the form
+      this.ssidForm = Object.assign({}, this.ssid); 
     }
   },
   created: function() {
     this.fetchSsids();
   },
   methods: {
-    formUpdated() {
-      // check for user changes
-      this.snackbar.text = "Save updates?";
-      this.snackbar.active = true;
-    },
-
-    onSelect: function(number) {
-      console.log("SSID selected " + number);
-      this.ssid = this.ssids[number];
-      this.formEnabled = true;
-    },
     fetchSsids: function() {
-      if (!this.net) {
-        return;
-      }
-      this.ssids = [];
-      this.$meraki.getSsids(this.net.id).then(res => (this.ssids = res));
+      if (!this.net) { return }
+      this.$meraki.getSsids(this.net.id).then(res => {
+        this.ssids = res;
+        this.ssid = this.ssids[this.ssidNum]; // set selected ssid
+      });
     },
-    notify(status, text) {
-      this.snackbar.text = text;
-      this.snackbar.color = status;
-      this.snackbar.active = true;
-    },
-
-    displaySsid: function(ssid) {
-      this.ssid = ssid;
-      console.log("displaySsid", this.ssid);
-    },
-
     updateSsid: function($index) {
       console.log("updating SSID ", this.ssid);
       if (this.ssid) {
+        this.ssidNum = this.ssidForm.number; // save SSID number for use after refresh
         this.$meraki
           .updateSsid(this.net.id, this.ssidForm.number, this.ssidForm)
-          .then(
-            res => {
-              this.fetchSsids(); // get clean copy of SSID list and update form
-              console.log("SSID updated!", this.ssidForm);
-              this.notify("success", "SSID Updated");
-            },
-            err => {
-              console.log("put request failed", err);
-              this.notify(
-                "error",
-                "Bummer, Failed to save changes. \n /api/networks/" +
-                  this.net.id +
-                  "/ssids/" +
-                  this.ssidForm.number
-              );
-            }
-          );
+          .then((res) => {
+            this.fetchSsids(); // get clean copy of SSID list and update form
+            console.log("SSID updated!", res);
+          });
       } else {
         console.log("failed to update SSID", this.ssidForm.number);
       }

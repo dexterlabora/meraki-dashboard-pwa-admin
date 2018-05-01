@@ -12,11 +12,13 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import MerakiService from "./services/meraki-service";
 import VueCharts from 'vue-chartjs'
+import VueMoment from 'vue-moment'
+import moment from 'moment-timezone'
 
+import { eventHub } from './eventhub';
+Vue.prototype.$meraki  = new MerakiService('', '/api', eventHub);
 
-Vue.prototype.$meraki  = new MerakiService('', '/api');
-
-
+Vue.use(VueMoment, { moment })
 Vue.use(Vuex)
 Vue.use(Vuetify)
 Vue.use(VueAxios, axios)

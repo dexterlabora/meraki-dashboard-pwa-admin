@@ -19,6 +19,7 @@
                 v-model="networkForm.type"
                 label="Type"
                 single-line
+                multiple
                 bottom
                 ></v-select>
                 <v-select
@@ -35,71 +36,41 @@
             </v-card-actions>                   
             </v-card>
         </v-flex>
-
-        <v-snackbar
-            :timeout="3000"
-            top
-            multi-line
-            :color="snackbar.color"
-            v-model="snackbar.active"
-            >
-            <h3>{{ snackbar.status }}</h3>
-            {{ snackbar.text }}
-            <v-btn flat color="white" @click.native="snackbar = false">Close</v-btn>
-        </v-snackbar>
     </v-layout>
 </template>
 
 <script>
-var moment = require('moment');
 
 export default {
-    data: function () {
-        return {
-            networkForm: {},
-            networkFormOptions: {
-                types: ['wireless', 'switch', 'appliance', 'phone'],
-                timeZones: moment.tz.names()
-            },
-            snackbar: {
-                active: false,
-                color: ''
-            }
-        }
-    },
-    computed: {
-      org () {
-        return this.$store.state.org;
+  data() {
+    return {
+      networkForm: {
+          name: '',
+          tags: '',
+          timeZone: '',
+          type: []
+      },
+      networkFormOptions: {
+        types: ["wireless", "switch", "appliance", "phone"],
+        timeZones: this.$moment.tz.names()
       }
-    },
-    methods: {
-        createNetwork (orgId, data) {
-            this.axios.post('/api/organizations/'+orgId+'/networks', data )
-            .then(response => {
-                console.log('createNetwork response', response.data);
-                this.networkForm = {}; // clear form
-                this.notify("success","Network Created");
-                this.$eventHub.$emit('netCreated', response.data);
-            })
-            .catch(e => {
-                this.notify("error","Failed to create network");
-                this.errors.push(e)
-          })
-        },
-        submitNetworkForm(){
-            this.createNetwork (this.org.id, {
-                name: this.networkForm.name,
-                tags: this.networkForm.tags,
-                timeZone: this.networkForm.timeZone,
-                type: this.networkForm.type
-           })
-        },
-        notify(status, text) {
-            this.snackbar.text = text;        
-            this.snackbar.color = status;
-            this.snackbar.active = true;
-        }
+    };
+  },
+  computed: {
+    org() {
+      return this.$store.state.org;
     }
-}
+  },
+  methods: {
+    submitNetworkForm() {
+      this.$meraki.createNetwork(this.org.id, {
+        name: this.networkForm.name,
+        tags: this.networkForm.tags,
+        timeZone: this.networkForm.timeZone,
+        type: this.networkForm.type.join(" ")
+      });
+    }
+  }
+};
 </script>
 

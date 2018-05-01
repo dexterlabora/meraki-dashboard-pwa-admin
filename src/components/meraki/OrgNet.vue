@@ -72,20 +72,33 @@ export default {
   },
   created: function () {
     // Set default selections based on state
-    this.orgs = this.$store.state.orgs;
-    this.nets = this.$store.state.nets;
-    this.org = this.$store.state.org;
-    this.net = this.$store.state.net;
+    this.orgs = this.$store.state.orgs || [{id, name}];
+    this.nets = this.$store.state.nets || [{id, name}];
+    this.org = this.$store.state.org || {};
+    this.net = this.$store.state.net || {};
     this.fetchOrgs();
   },
   methods: {
     fetchOrgs: function(){
       this.orgs = [];
-      this.$meraki.getOrganizations().then(res => this.orgs = res);
+      this.$meraki.getOrganizations()
+        .then(
+          res => {
+          this.orgs = res
+          this.org = this.org ? this.org : this.orgs[0]; // set default
+          }
+        )
+        .catch(
+          e => {
+            console.log('fetchOrgs error', e)
+          });
     },
     fetchNets: function(){
       this.nets = [];
-      this.$meraki.getNetworks(this.org.id).then(res => this.nets = res);
+      this.$meraki.getNetworks(this.org.id).then(res => {
+        this.nets = res
+        this.net = (this.net.organizationId == this.org.id) ? this.net : this.nets[0]; // set default
+        });
     }
   }
 };

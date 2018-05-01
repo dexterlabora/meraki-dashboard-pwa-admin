@@ -1,5 +1,17 @@
 <template>
   <v-app id="app">
+
+    <v-snackbar
+      :timeout="3000"
+      top
+      multi-line
+      :color="snackbar.color"
+      v-model="snackbar.active"
+      >
+      <h3>{{ snackbar.status }}</h3>
+      {{ snackbar.text }}
+      <v-btn flat color="white" @click.native="snackbar.active = false">Close</v-btn>
+    </v-snackbar>
     
     <v-toolbar :color="!adminMode ? 'success' : 'warning'">
       <v-toolbar-side-icon @click.native.stop="showNav = !showNav"></v-toolbar-side-icon>
@@ -61,7 +73,7 @@
       </v-navigation-drawer>
       <v-content>
         <v-container>
-
+          <pulse-loader class="loader" :loading="loading" color="green" size="20px"></pulse-loader>
           <router-view class="view"></router-view>
         </v-container>
       </v-content>
@@ -72,40 +84,59 @@
 </template>
 
 <script>
-import OrgNet from './components/meraki/OrgNet.vue'
-import Settings from './components/Settings.vue'
-
+import OrgNet from "./components/meraki/OrgNet.vue";
+import Settings from "./components/Settings.vue";
+import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { eventHub } from "./eventhub";
 
 export default {
   components: {
-    'org-net': OrgNet,
-    'settings': Settings
+    "org-net": OrgNet,
+    settings: Settings,
+    "pulse-loader": PulseLoader
   },
-	data: function() {
-		return {
+  data: function() {
+    return {
       showNav: false,
+      loading: false,
+      snackbar: {
+        active: false,
+        color: "",
+        mode: "",
+        text: ""
+      }
     };
   },
   watch: {
-    showNav: function () {
-      console.log('showNav', this.showNav)
+    showNav: function() {
+      console.log("showNav", this.showNav);
     },
-    apiKey: function () {
+    apiKey: function() {
       // update all Meraki API calls with the new API key header
-      console.log('updating global axios defaults ', this.apiKey)
-      this.axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = this.apiKey;
+      console.log("updating global axios defaults ", this.apiKey);
+      this.axios.defaults.headers.common[
+        "X-Cisco-Meraki-API-Key"
+      ] = this.apiKey;
       this.$meraki.apiKey = this.apiKey;
     }
   },
   computed: {
-    adminMode: function(){
+    adminMode: function() {
       return this.$store.state.adminMode;
     },
-    apiKey: function () {
+    apiKey: function() {
       return this.$store.state.apiKey;
     }
   },
-  mounted: function () {
+  methods: {
+    notify(status, text) {
+      this.snackbar.text = text;
+      this.snackbar.color = status;
+      this.snackbar.active = true;
+    }
+  },
+  mounted: function() {
+    
     /*
     this.$eventHub.$on('orgSelected', function (org) {
       console.log('org update event received: ',org)
@@ -125,13 +156,30 @@ export default {
     });
     */
   },
-  created: function () {
+  created: function() {
     // Set Axios defaults
     //axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = payload;
-    this.axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = this.apiKey;
+    //this.axios.defaults.headers.common["X-Cisco-Meraki-API-Key"] = this.apiKey;
     this.$meraki.apiKey = this.apiKey;
+    eventHub.$on("meraki-loading", loading => (this.loading = loading));
+    //eventHub.$on("meraki-error", e => this.notify("error", e));
+    eventHub.$on('meraki-error', (text) => {
+      this.notify('error', text)
+    });
+    eventHub.$on('meraki-success-put', (text) => {
+      this.notify('success', text)
+    });
+    eventHub.$on('meraki-success-post', (text) => {
+      this.notify('success', text)
+    });
+    eventHub.$on('meraki-success-delete', (text) => {
+      this.notify('warning', text)
+    });
+  },
+  beforeDestroy: function() {
+    eventHub.$off("meraki-loading", loading => (this.loading = loading));
   }
-}
+};
 </script>
 
 <style>
@@ -141,5 +189,11 @@ export default {
   justify-content: center;
 }
 
-
+.loader {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -100px;
+}
 </style>
