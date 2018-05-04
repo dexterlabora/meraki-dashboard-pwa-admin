@@ -1,6 +1,5 @@
 <template>
   <v-app id="app">
-
     <v-snackbar
       :timeout="3000"
       top
@@ -135,45 +134,22 @@ export default {
       this.snackbar.active = true;
     }
   },
-  mounted: function() {
-    
-    /*
-    this.$eventHub.$on('orgSelected', function (org) {
-      console.log('org update event received: ',org)
-      this.org = org;
-    });
-    this.$eventHub.$on('netSelected', function (payload) {
-      console.log('net update event received: ',payload)
-      this.net = payload;
-      //this.net = {id: 0, name:'test'}
-      //alert(this.net.name); //works
-    });
-    this.$eventHub.$on('apiKeyUpdated', function (payload) {
-      console.log('apikey update event received: ',payload)
-      //this.$store.state.apikey = payload;
-      //axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = this.$store.state.apikey;
-      axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = payload;
-    });
-    */
-  },
   created: function() {
-    // Set Axios defaults
-    //axios.defaults.headers.common['X-Cisco-Meraki-API-Key'] = payload;
-    //this.axios.defaults.headers.common["X-Cisco-Meraki-API-Key"] = this.apiKey;
     this.$meraki.apiKey = this.apiKey;
-    eventHub.$on("meraki-loading", loading => (this.loading = loading));
-    //eventHub.$on("meraki-error", e => this.notify("error", e));
+    eventHub.$on("meraki-loading", (loading) => {
+      this.loading = loading;
+    });
     eventHub.$on('meraki-error', (text) => {
-      this.notify('error', text)
+      this.notify('error', text);
     });
     eventHub.$on('meraki-success-put', (text) => {
-      this.notify('success', text)
+      this.notify('success', text);
     });
     eventHub.$on('meraki-success-post', (text) => {
-      this.notify('success', text)
+      this.notify('success', text);
     });
     eventHub.$on('meraki-success-delete', (text) => {
-      this.notify('warning', text)
+      this.notify('warning', text);
     });
   },
   beforeDestroy: function() {

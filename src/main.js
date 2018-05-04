@@ -14,6 +14,16 @@ import MerakiService from "./services/meraki-service";
 import VueCharts from 'vue-chartjs'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
+import * as VueGoogleMaps from 'vue2-google-maps'
+//import * as VueGoogleMaps from 'vue2-google-maps/src/main'
+//import * as VueGoogleMaps from '../node_modules/vue2-google-maps/src/main'
+//const VueGoogleMaps = require('vue2-google-maps/src/main');
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDG1VII_DIeeM6uGUjHmGp_LamDuQdY1ZU'
+  }
+})
 
 import { eventHub } from './eventhub';
 Vue.prototype.$meraki  = new MerakiService('', '/api', eventHub);

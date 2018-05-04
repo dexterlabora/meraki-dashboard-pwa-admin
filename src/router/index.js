@@ -25,6 +25,7 @@ import TrafficPage from '../components/meraki/traffic/TrafficPage'
 import WirelessPage from '../components/meraki/wireless/WirelessPage'
 import ClientsPage from '../components/meraki/clients/ClientsPage'
 import OrgDevicesPage from '../components/meraki/org-devices/OrgDevicesPage'
+import DeviceDetails from '../components/meraki/org-devices/DeviceDetails'
 
 Vue.use(Router)
 
@@ -94,7 +95,13 @@ export default new Router({
       name: 'orgDevices',
       component: OrgDevicesPage,
       path: '/orgdevices'
-    }
+    },
+    {
+      name: 'deviceDetails',
+      component: DeviceDetails,
+      path: '/devicedetails',
+      props: true
+    },
   ]
 })
 

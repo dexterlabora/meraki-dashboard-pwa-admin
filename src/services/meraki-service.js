@@ -1,23 +1,55 @@
 
-/* Meraki Dashboard API endpoint service
+/* Meraki Dashboard API endpoint service for VueJS
 
 A collection of functions to interact with the Meraki API. 
 
+This version is designed to work with a VueJS project.
+
+It is easy to duplicate any of the methods to and modify them for new API endpoints.
+
+The service will leverage an event HUB to broadcast messages while scripts are running. This is helfpul 
+to get notifications for loading status and other feedback from the scripts. 
+
+The service requires a few dependencies, which must be installed. 
 Install:
 npm install axios json-bigint --save
 
-Use (VueJS example):
+Use VueJS example:
 
-//main.js
+// eventhub.js
+import Vue from 'vue'
+export const eventHub = new Vue();
+
+// main.js
 import MerakiService from "./services/meraki-service.class";
-Vue.prototype.$meraki  = new MerakiService(apikey, baseUrl);
+Vue.prototype.$meraki  = new MerakiService('', '/api', eventHub);
 
-// componentXYZ
-onGetClientsForNetwork() {
-      this.$meraki.getClientsForNetwork(this.netId, 86400).then(res => {
-        this.clients = res;
-      });
+// app.vue
+<template>
+  <ul><li v-for="c in clients"><b>MAC Address:</b> {{c.mac}}</li></ul>
+</template>
+<script>
+import { eventHub } from "./eventhub";
+
+export default {
+  data: function() {
+    return {
+      clients: []]
     }
+  },
+  created: function() {
+    this.$meraki.apiKey = this.apiKey;
+  },
+  methods: function() {
+    onGetClientsForNetwork() {
+        this.$meraki.getClientsForNetwork(this.netId, 86400, eventHub).then(res => {
+          this.clients = res;
+        });
+      }
+    }
+  }
+}
+</script>
 
 */
 
@@ -67,11 +99,12 @@ export default class merakiService {
       headers: { 'X-Cisco-Meraki-API-Key': this._apiKey }
     });
 
+
     this.meraki.interceptors.request.use((config) => {
       this._eventHub.$emit('meraki-loading', true);
       return config;
     });
-
+ 
     this.meraki.interceptors.response.use(
       res => {
         this._eventHub.$emit('meraki-loading', false);
@@ -97,7 +130,7 @@ export default class merakiService {
   }
 
   // *********
-  // Getters & Setters for Global API Settings
+  // Getters & Setters for Global API Options
   // *********
 
 
