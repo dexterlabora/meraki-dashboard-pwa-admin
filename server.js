@@ -109,8 +109,8 @@ app.get('*', function (request, response) {
 // Start server
 var port = process.env.PORT || 8088;
 var server = app.listen(port, () => {
-  console.log('Server Running on '+ server.address().address+port+'/');
-  console.log('Meraki API Proxy: localhost:'+server.address().address+ ':' +port+'/api');
+  console.log('Server Running on http://localhost:'+port+'/');
+  console.log('Meraki API Proxy: http://localhost:'+port+'/api');
   console.log('Default API Endpoint: ', configs.apiUrl);
 });
 

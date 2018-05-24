@@ -5,9 +5,9 @@
   "author": "Cory Guynn",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js & node server.js",
-    "build": "node build/build.js",
     "start": "node server.js",
+    "dev": "node build/dev-server.js & node server.js",
+    "build": "node build/build.js", 
     "web": "node server.js"
   },
   "dependencies": {
