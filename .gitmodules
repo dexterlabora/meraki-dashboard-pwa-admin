@@ -1,3 +1,3 @@
 [submodule "meraki-service"]
 	path = meraki-service
-    url= https://github.com/dexterlabora/meraki-service.git
+    url= git://github.com/dexterlabora/meraki-service
