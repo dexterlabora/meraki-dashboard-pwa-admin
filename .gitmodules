@@ -1,3 +1,0 @@
-[submodule "meraki-service"]
-	path = meraki-service
-	url = file:./meraki-service
