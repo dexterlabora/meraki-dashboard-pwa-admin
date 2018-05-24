@@ -26,6 +26,7 @@ import WirelessPage from '../components/meraki/wireless/WirelessPage'
 import ClientsPage from '../components/meraki/clients/ClientsPage'
 import OrgDevicesPage from '../components/meraki/org-devices/OrgDevicesPage'
 import DeviceDetails from '../components/meraki/org-devices/DeviceDetails'
+import PiiPage from '../components/meraki/pii/PiiPage'
 
 Vue.use(Router)
 
@@ -102,6 +103,11 @@ export default new Router({
       path: '/devicedetails',
       props: true
     },
+    {
+      name: 'pii',
+      component: PiiPage,
+      path: '/pii'
+    }
   ]
 })
 

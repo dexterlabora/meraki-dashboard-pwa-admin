@@ -64,6 +64,10 @@
             <v-list-tile-title>Device Status | Org-Wide</v-list-tile-title>
           </v-list-tile>
 
+          <v-list-tile :router="true" :to="{ name: 'pii'}" v-if="adminMode">
+            <v-list-tile-title>PII</v-list-tile-title>
+          </v-list-tile>
+
           <v-list-tile :router="true" :to="{ name: 'about'}">
             <v-list-tile-title>About</v-list-tile-title>
           </v-list-tile>
@@ -132,25 +136,48 @@ export default {
       this.snackbar.text = text;
       this.snackbar.color = status;
       this.snackbar.active = true;
+    },
+    initMeraki() {
+      this.$meraki.apiKey = this.apiKey;
+      console.log('initMeraki this.$meraki.meraki.interceptors', this.$meraki.meraki.interceptors)
+      
+      this.$meraki.meraki.interceptors.request.use(
+        conf => {
+          eventHub.$emit("before-request");
+          this.loading = true;
+          return conf;
+        },
+        error => {
+          eventHub.$emit("request-error");
+          this.loading = false;
+          this.notify("error", error);
+          return Promise.reject(error);
+        }
+      );
+      this.$meraki.meraki.interceptors.response.use(
+        response => {
+          eventHub.$emit("after-response");
+          this.loading = false;
+          // notify on changes made
+          console.log('inerceptor response.config.method', response.config.method);
+          if (['post', 'put', 'delete'].indexOf(response.config.method) >= 0) {       
+            this.notify("success", "Changes Saved!");
+          }
+          return response;
+        },
+        error => {
+          eventHub.$emit("response-error");
+          this.loading = false;
+          this.notify("error", error);
+          return Promise.reject(error);
+        }
+      );
+      console.log('initMeraki this.$meraki.meraki.interceptors UPDATED', this.$meraki.meraki.interceptors)
     }
   },
   created: function() {
-    this.$meraki.apiKey = this.apiKey;
-    eventHub.$on("meraki-loading", (loading) => {
-      this.loading = loading;
-    });
-    eventHub.$on('meraki-error', (text) => {
-      this.notify('error', text);
-    });
-    eventHub.$on('meraki-success-put', (text) => {
-      this.notify('success', text);
-    });
-    eventHub.$on('meraki-success-post', (text) => {
-      this.notify('success', text);
-    });
-    eventHub.$on('meraki-success-delete', (text) => {
-      this.notify('warning', text);
-    });
+    this.initMeraki();
+
   },
   beforeDestroy: function() {
     eventHub.$off("meraki-loading", loading => (this.loading = loading));

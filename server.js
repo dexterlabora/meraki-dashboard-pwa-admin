@@ -56,38 +56,34 @@ var jsonParser = bodyParser.json();
 
 // API Route - Will be proxied through Meraki Dashboard API
 
-app.use('/api', jsonParser, function (req, res){
-  console.log('API request ', req.url);
-  console.log('request body, ', req.body);
+// ********
+// Meraki API
+// ********
+//const Meraki = require('./meraki-service');
+const Meraki = require('meraki-service');
+const meraki = new Meraki(configs.apiKey,'http://localhost:' +port+'/api');
 
+// API Proxy Route - Will be proxied through Meraki Dashboard API
+app.use('/api', jsonParser, function (req, res){
+  console.log('API request ', req.method, req.url, req.method != 'GET' ? req.body:'');
   var options = {
     qs: req.query,
     url: configs.apiUrl + req.url,
     method: req.method,
-    body: JSON.stringify(req.body), 
-    //followAllRedirects: true, // Does not work as intended with PUT,POST,DELETE (returns a [GET] on final location)
-    headers: {
-        'X-Cisco-Meraki-API-Key': req.headers['x-cisco-meraki-api-key'] || configs.apiKey, // Use client API key first, then server
-        'Content-Type': 'application/json'
-    } 
+    body: req.body,
+    headers: {}
+  };
+  //console.log('/api req.headers', req.headers);
+  if(req.headers['x-cisco-meraki-api-key']){
+    options.headers['X-Cisco-Meraki-API-Key'] = req.headers['x-cisco-meraki-api-key'];
+    //console.log("New headers sent", options.headers );
   }
+  
 
-  requestMeraki(options, function(err, response, data){
-    //console.log('requestMeraki req.headers ',req.headers);
-    console.log('requestMeraki options ',options);
-    if(err){
-        console.log("requestMeraki err ", err)
-        res.send(err);
-    }
-    if(!response){
-      console.log('no response from server')
-      return
-    }
-    console.log('FINAL res.statusCode ',response.statusCode);
-    console.log('FINAL res.body ',response.body);
-
-    res.setHeader('content-type', response.headers['content-type']);
-    res.status(response.statusCode).send(data);
+  meraki.proxy(options).then((response) => {
+    console.log("server: proxy response.data", response);
+    res.send(response);
+    res.end();
   });
 
 });

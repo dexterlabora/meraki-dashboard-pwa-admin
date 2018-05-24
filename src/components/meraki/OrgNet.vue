@@ -32,7 +32,6 @@
 </template>
 
 <script>
-
 export default {
   data: function() {
     return {
@@ -40,72 +39,73 @@ export default {
       nets: [],
       org: {},
       net: {}
-    }
+    };
   },
   computed: {
-     apiKey: function () {
+    apiKey: function() {
       return this.$store.state.apiKey;
     }
   },
   watch: {
-    org () {
+    org() {
       // New org selected, fetch related networks
       this.fetchNets();
-      this.$store.commit('setOrg', this.org);
+      this.$store.commit("setOrg", this.org);
     },
-    net () {
-      console.log('orgnet update state: net', this.net)
-      this.$store.commit('setNet', this.net);
+    net() {
+      console.log("orgnet update state: net", this.net);
+      this.$store.commit("setNet", this.net);
     },
-    orgs () {
+    orgs() {
       this.fetchNets();
-      this.$store.commit('setOrgs', this.orgs);
+      this.$store.commit("setOrgs", this.orgs);
     },
-    nets () {
-      console.log('orgnet update state: net', this.nets)
-      this.$store.commit('setNets', this.nets);
+    nets() {
+      console.log("orgnet update state: net", this.nets);
+      this.$store.commit("setNets", this.nets);
     },
-    apiKey () {
-      console.log('orgNet apiKey updated, fetching orgs')
+    apiKey() {
+      console.log("orgNet apiKey updated, fetching orgs");
       this.fetchOrgs();
-    } 
+    }
   },
-  created: function () {
+  created: function() {
     // Set default selections based on state
-    this.orgs = this.$store.state.orgs || [{id, name}];
-    this.nets = this.$store.state.nets || [{id, name}];
+    this.orgs = this.$store.state.orgs || [{ id, name }];
+    this.nets = this.$store.state.nets || [{ id, name }];
     this.org = this.$store.state.org || {};
     this.net = this.$store.state.net || {};
     this.fetchOrgs();
   },
   methods: {
-    fetchOrgs: function(){
+    fetchOrgs: function() {
       this.orgs = [];
-      this.$meraki.getOrganizations()
-        .then(
-          res => {
-          this.orgs = res
+      this.$meraki
+        .getOrganizations()
+        .then(res => {
+          this.orgs = JSON.parse(res);
+          console.log("orgs:", this.orgs);
+          console.log("orgs[0]:", this.orgs[0]);
           this.org = this.org ? this.org : this.orgs[0]; // set default
-          }
-        )
-        .catch(
-          e => {
-            console.log('fetchOrgs error', e)
-          });
+        })
+        .catch(e => {
+          console.log("fetchOrgs error", e);
+        });
     },
-    fetchNets: function(){
+    fetchNets: function() {
       this.nets = [];
       this.$meraki.getNetworks(this.org.id).then(res => {
-        this.nets = res
-        this.net = (this.net.organizationId == this.org.id) ? this.net : this.nets[0]; // set default
-        });
+        this.nets = res;
+        this.net =
+          this.net.organizationId == this.org.id ? this.net : this.nets[0]; // set default
+      });
     }
   }
 };
 </script>
 <style>
 .list {
-    color: #0f0101;
+  color: #0f0101;
 }
 </style>
 

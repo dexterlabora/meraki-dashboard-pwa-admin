@@ -288,6 +288,18 @@ export default class merakiService {
   written to handle this.
   */
 
+  // Get Network ID for a Device MAC 
+  async getNetworkId(orgId, mac){
+    return await getOrgDevices(orgId).then((res) =>{
+      const network = [] = res.filter(function( obj ) {
+        return obj.mac == mac;
+      });
+      console.log('filtered network ', network);
+      console.log('filtered network ID ', network[0].networkId);
+      return network[0].networkId;
+    });
+  }
+
   async getClientsForDevices(devices, timespan, type) {
     // where type = "MR" MV MX MS MC
     console.log("Running Clients for Devices script...");

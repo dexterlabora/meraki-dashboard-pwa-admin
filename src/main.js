@@ -11,13 +11,18 @@ import createPersistedState from 'vuex-persistedstate'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import MerakiService from "./services/meraki-service";
+import Meraki from "meraki-service";
 import VueCharts from 'vue-chartjs'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 import * as VueGoogleMaps from 'vue2-google-maps'
-//import * as VueGoogleMaps from 'vue2-google-maps/src/main'
-//import * as VueGoogleMaps from '../node_modules/vue2-google-maps/src/main'
-//const VueGoogleMaps = require('vue2-google-maps/src/main');
+import VueLodash from 'vue-lodash'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
+
+const options = { name: 'lodash' }
+
+Vue.use(VueLodash, options)
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -26,7 +31,14 @@ Vue.use(VueGoogleMaps, {
 })
 
 import { eventHub } from './eventhub';
-Vue.prototype.$meraki  = new MerakiService('', '/api', eventHub);
+
+// built-in service
+// Vue.prototype.$meraki  = new MerakiService('', '/api', eventHub);
+
+// external service
+Vue.prototype.$meraki  = new Meraki('','/api',);
+
+
 
 Vue.use(VueMoment, { moment })
 Vue.use(Vuex)

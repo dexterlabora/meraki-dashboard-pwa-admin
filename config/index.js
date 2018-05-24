@@ -56,11 +56,10 @@ module.exports = {
       });
     },
     */
-    // proxyTable: {},
     // works but not with redirects
     proxyTable: {
       '/api': {
-        target: configs.apiUrl,
+        target: 'http://localhost:8088/api',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
