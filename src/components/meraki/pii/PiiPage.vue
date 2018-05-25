@@ -22,7 +22,7 @@
                     required
                     v-model="form.pii"
                     label="Personal Identifying Information"
-                    placeholder="MAC, e-mail, IMEI"
+                    placeholder="username, MAC, e-mail, IMEI"
                     :rules="[v => !!v || 'Item is required']"
                 ></v-text-field>
                 <span><v-btn color="primary" dark slot="activator" class="mb-2" @click="onSearch()">Search</v-btn></span>
@@ -155,7 +155,7 @@ export default {
         pii: "",
         piiType: ""
       },
-      piiTypeOptions: ["mac", "email", "serial", "imei"],
+      piiTypeOptions: ["username", "mac", "email", "serial", "imei"],
       dialog: false,
       smDevices: {},
 
