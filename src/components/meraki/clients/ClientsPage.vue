@@ -59,8 +59,8 @@
         <v-list two-line subheader>
           <v-list-group
             
-            v-for="client in clients"
-            :key="client.$index"
+            v-for="(client, index) in clients"
+            :key="index"
             no-action
           >
             <v-list-tile slot="activator">
@@ -71,11 +71,22 @@
                 <v-list-tile-title>{{ client.description ? client.description : client.mac}} </v-list-tile-title>
                 <v-list-tile-sub-title><v-chip v-if="client.policy" small>{{ client.policy.name ? client.policy.name : client.policy.type }}</v-chip></v-list-tile-sub-title>
               </v-list-tile-content>
+              <v-list-tile-action>
+                <v-btn icon ripple :router="true" :to="{ name: 'clientDetails', params: {client: client}}">
+                  <v-icon>info</v-icon>
+                </v-btn>
+              </v-list-tile-action>
             </v-list-tile>
             <v-list-tile >
               <v-list-tile-content>
                 <v-list-tile-title>Network Details</v-list-tile-title>
                 <v-list-tile-sub-title>{{ client.ip }} : {{client.mac}}</v-list-tile-sub-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile >
+              <v-list-tile-content>
+                <v-list-tile-title>Network Usage</v-list-tile-title>
+                <v-list-tile-sub-title>Sent: {{bytesToSize(client.usage.sent*1024)}} | Received: {{ bytesToSize(client.usage.recv*1024) }}</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
             <v-list-tile >
@@ -115,13 +126,14 @@
 </template>
 
 <script>
-var PulseLoader = require("vue-spinner/src/PulseLoader.vue");
+//var PulseLoader = require("vue-spinner/src/PulseLoader.vue");
 
 export default {
   data: function() {
     return {
       selectedClients: [],
-      clients: [],
+      //clients: [],
+      clientsAndPolicy: [],
       policy: "",
       policies: [],
       deviceType: "MR",
@@ -145,25 +157,40 @@ export default {
       if (!this.net.id) {
         return;
       }
-      this.clients = [];
+      //this.clients = [];
       this.selectedClients = [];
       // Get Clients
       this.$meraki
         .getClientsForNetwork(this.net.id, this.timespan, this.deviceType)
-        .then(res => {
-          this.clients = res;
-          return (this.clients = this.removeDuplicates(this.clients, "id"));
-        })
+        .then(
+          res => {
+            //this.clients = res; //res[0]
+            console.log("getClientsForNetwork res", res);
+            //this.clients = this.removeDuplicates(res, "mac");
+            //this.clients = res;
+            this.$store.commit("setClients", res);
+            //return this.clients;
+            //return (this.clients = this.removeDuplicates(this.clients, "mac"));
+          },
+          error => {
+            console.log("error getting clients for network", error);
+          }
+        )
         // Get Policy for Each Client
         .then(() => {
           if (!this.clients) {
             return;
           }
           this.$meraki
-            .getClientPolicyForClients(this.clients, this.net.id, this.timespan)
+            .getClientPolicyForClients(this.net.id, this.clients, this.timespan)
             .then(res => {
-              this.clients = res;
-              this.clients = this.addPolicyNames(this.clients, this.policies);
+              //this.clients = res;
+              //this.clientsAndPolicy = res;
+              this.clientsAndPolicy = this.addPolicyNames(
+                this.clients,
+                this.policies
+              );
+              this.$store.commit("setClients", this.clientsAndPolicy);
             });
         });
     },
@@ -180,7 +207,7 @@ export default {
     addPolicyNames(clients, policies) {
       console.log("addPolicyNames");
       let newClients = [];
-      clients.forEach(c => {
+      clients.map(c => {
         if (!c.policy) {
           return;
         }
@@ -216,6 +243,7 @@ export default {
       var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
       return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
     },
+
     removeDuplicates(myArr, prop) {
       return myArr.filter((obj, pos, arr) => {
         return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
@@ -231,6 +259,9 @@ export default {
     },
     nets() {
       return this.$store.state.nets;
+    },
+    clients() {
+      return this.$store.state.clients;
     }
   },
   watch: {

@@ -6,7 +6,6 @@
             v-model="device.active"
             v-for="device in devices"
             :key="device.serial"
-            :prepend-icon="mood"
             no-action
           >
             <v-list-tile slot="activator">
@@ -42,7 +41,7 @@ export default {
   data: function() {
     return {
       devices: [],
-      device: {},
+      device: {}
     };
   },
   computed: {
@@ -71,5 +70,4 @@ export default {
 };
 </script>
 <style>
-
 </style>

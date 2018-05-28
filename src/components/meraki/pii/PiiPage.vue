@@ -1,153 +1,124 @@
 <template>
-    <v-container fluid>
+  <v-container fluid>
     <v-layout row wrap>
-        <v-flex xs12 md12>  
-            <h2>Personal Identifying Information</h2>
-            <p>A tool to examine, export or adjust the information processed by Cisco Meraki.</p>
-        </v-flex>
-        <v-flex xs12 md12>   
-            <v-form ref="form" v-model="formValid" lazy-validation>
-            <v-flex xs12 md6>    
-                <v-select
-                    required
-                    :items="piiTypeOptions"
-                    v-model="form.piiType"
-                    label="Select Identifier"
-                    single-line
-                    :rules="[v => !!v || 'Item is required']"
-                ></v-select>
-            </v-flex> 
-            <v-flex xs12 md6>
-                <v-text-field
-                    required
-                    v-model="form.pii"
-                    label="Personal Identifying Information"
-                    placeholder="username, MAC, e-mail, IMEI"
-                    :rules="[v => !!v || 'Item is required']"
-                ></v-text-field>
-                <span><v-btn color="primary" dark slot="activator" class="mb-2" @click="onSearch()">Search</v-btn></span>
-            </v-flex>
-            </v-form>
-        </v-flex>
-        <v-flex xs12 md6 mt-5>
-        <v-card v-if="piiResultsArray.length > 0">
-            <v-card-title>
-                <h3 class="headline mb-0">Search Results</h3>
-            </v-card-title>
-            <v-card-text>
-            <v-list v-for="p in piiResultsArray" :key="p.networkId">
-                <v-list-group
-                    v-model="piiResultsArray.active"
-                    :key="p.networkId"
-                    no-action
-                >
-                    <v-list-tile slot="activator">
-                    <v-list-tile-content>
-                        <v-list-tile-title>Network: {{p.networkName}}</v-list-tile-title>
-                        <v-list-tile-sub-title>ID: {{p.networkId}}</v-list-tile-sub-title>
-                    </v-list-tile-content>
-                    </v-list-tile>
+      <v-flex xs12 md12>
+        <h2>Personal Identifying Information</h2>
+        <p>A tool to examine, export or adjust the information processed by Cisco Meraki.</p>
+      </v-flex>
+      <v-flex xs12 md12>
+        <v-form ref="form" v-model="formValid" lazy-validation>
+          <v-flex xs12 md6>
+            <v-select required :items="piiTypeOptions" v-model="form.piiType" label="Select Identifier" single-line :rules="[v => !!v || 'Item is required']"></v-select>
+          </v-flex>
+          <v-flex xs12 md6>
+            <v-text-field required v-model="form.pii" label="Personal Identifying Information" placeholder="username, MAC, e-mail, IMEI" :rules="[v => !!v || 'Item is required']"></v-text-field>
+            <span><v-btn color="primary" dark slot="activator" class="mb-2" @click="onSearch()">Search</v-btn></span>
+          </v-flex>
+        </v-form>
+      </v-flex>
 
-                    <template v-for="(k,i) of Object.keys(p)">
-                        <template v-if="typeof p[k] === 'object'">
-                            <v-subheader v-if="p[k].length > 0" :key="i">{{k}}</v-subheader>
-                            <v-list-tile v-for="(item, index) in p[k]" v-bind:key="index" mt-0>
-                                <v-list-tile-content>
-                                    <v-list-tile-title>{{item}}</v-list-tile-title>
-                                    <template  v-if="findPiiRequest(k.replace(/s+$/, ''),item)"> 
-                                        <v-list-tile-sub-title><i>Requested Change: {{new Date(findPiiRequest(k.replace(/s+$/, ''),item).createdAt*1000).toLocaleString().split(',')[0]}}</i></v-list-tile-sub-title>
-                                        <!--v-list-tile-sub-title v-if="findPiiRequest(k).completedAt"><i>Completed: {{new Date(findPiiRequest(item).completedAt*1000).toLocaleString().split(',')[0]}}</i></v-list-tile-sub-title-->
-                                    </template>
-                                </v-list-tile-content>    
-                                        <v-list-tile-action v-if="['username', 'email', 'mac', 'smUserId', 'smDeviceId', 'bluetoothMac'].indexOf(k.replace(/s+$/, '')) >= 0">
-                                            <v-btn icon ripple @click="onModify(k.replace(/s+$/, ''),item)"> 
-                                                <v-icon color="red darken-4">block</v-icon>
-                                            </v-btn>
-                                        </v-list-tile-action>
-                            </v-list-tile>
-                        </template>
-                    </template>
+      <v-flex xs12 md6 mt-5>
+        {{msg}}
+        <v-card v-if="piiResultsArray.length > 0">
+          <v-card-title>
+            <h3 class="headline mb-0">Search Results</h3>
+          </v-card-title>
+          <v-card-text>
+            <v-list v-for="p in piiResultsArray" :key="p.networkId">
+              <v-list-group v-model="piiResultsArray.active" :key="p.networkId" no-action>
+                <v-list-tile slot="activator">
+                  <v-list-tile-content>
+                    <v-list-tile-title>Network: {{p.networkName}}</v-list-tile-title>
+                    <v-list-tile-sub-title>ID: {{p.networkId}}</v-list-tile-sub-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+  
+                <template v-for="(k,i) of Object.keys(p)">
+                  <template v-if="typeof p[k] === 'object'">
+                    <v-subheader v-if="p[k].length > 0" :key="i">{{k}}</v-subheader>
+                      <v-list-tile v-for="(item, index) in p[k]" v-bind:key="index" mt-0>
+                          <v-list-tile-content>
+                              <v-list-tile-title>{{item}}</v-list-tile-title>
+                              <template  v-if="findPiiRequest(k.replace(/s+$/, ''),item)"> 
+                                  <v-list-tile-sub-title><i>Requested Change: {{new Date(findPiiRequest(k.replace(/s+$/, ''),item).createdAt*1000).toLocaleString().split(',')[0]}}</i></v-list-tile-sub-title>
+                                  <!--v-list-tile-sub-title v-if="findPiiRequest(k).completedAt"><i>Completed: {{new Date(findPiiRequest(item).completedAt*1000).toLocaleString().split(',')[0]}}</i></v-list-tile-sub-title-->
+                              </template>
+                           </v-list-tile-content>    
+                            <v-list-tile-action v-if="['username', 'email', 'mac', 'smUserId', 'smDeviceId', 'bluetoothMac'].indexOf(k.replace(/s+$/, '')) >= 0">
+                              <v-btn icon ripple @click="onModify(k.replace(/s+$/, ''),item)"> 
+                                  <v-icon color="red darken-4">block</v-icon>
+                              </v-btn>
+                            </v-list-tile-action>
+                    </v-list-tile>
+                  </template>
+                </template>
 
             </v-list-group>
             </v-list>
-
-
-
-
-
-
-
             </v-card-text>
             <v-flex xs12 md12>
-            <v-btn color="success" class="mb-2" @click="exportCsv()">Export</v-btn>
-        </v-flex>
-        </v-card>
+              <v-btn color="success" class="mb-2" @click="exportCsv()">Export</v-btn>
+            </v-flex>
+          </v-card>
         </v-flex>
 
         <v-flex>
-            <v-dialog v-model="dialog" max-width="500px" persistent>
-        <v-card>
-          <v-card-title>
-            Manage PII Processing
-          </v-card-title>
-          <v-card-text>
-            <v-flex>
-                <v-card-title>  
-                    <strong>
-                        Warning: These changes will have a significant impact as to how Cisco Meraki will process the selected Personal Indetifying Information. 
-                        Please read more about this <a href="#">here</a>.
-                    </strong>
-                </v-card-title>
-            
-            <hr>
+          <v-dialog v-model="dialog" max-width="500px" persistent>
+            <v-card>
+              <v-card-title>
+                Manage PII Processing
+              </v-card-title>
+              <v-card-text>
+                <v-flex>
+                    <v-card-title>  
+                        <strong>
+                            Warning: These changes will have a significant impact as to how Cisco Meraki will process the selected Personal Indetifying Information. 
+                            Please read more about this <a href="#">here</a>.
+                        </strong>
+                    </v-card-title>
+                
+                <hr>
 
-            </v-flex>
-            <v-flex>
-                Modify processing for: 
-                <div v-for="(value, key) in formModify" :key=value>
-                    <b>{{key}}</b> : <span class="red--text">{{value}}</span>
-                </div>
-            </v-flex>
-            <v-flex mt-2>
-            <v-checkbox
-                v-model="confirm"
-                label="I understand."
-                required
-                >
-            </v-checkbox>
-                <v-btn color="error" outline @click.stop="onDelete()" :disabled="!confirm">Delete All Information</v-btn>
-                <v-btn v-if="formModify.mac || formModify.smDeviceId || formModify.smUserId" color="error" outline @click.stop="onRestrict()" :disabled="!confirm">Restrict Processing</v-btn>
-            </v-flex>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" flat @click.stop="dialog=false; confirm=false">Cancel</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-        </v-flex>
-        
-        <v-flex>
-        <!--v-bottom-sheet v-model="sheet">
-            <h2>Warning:</h2>
-                <p>You are about to modify how user data is store or processed by Cisco Meraki.</p>
-                <p><a href="#">More Info</a></p>
-            <v-btn color="error" class="mb-2 text-xs-center" @click="fetchPii()">Stop Processing User Data</v-btn>
-            <v-btn color="error" class="mb-2" @click="fetchPii()">Delete All User Data</v-btn>
-        </v-bottom-sheet-->
-            
+                </v-flex>
+                <v-flex>
+                    Modify processing for: 
+                    <div v-for="(value, key) in formModify" :key=value>
+                        <b>{{key}}</b> : <span class="red--text">{{value}}</span>
+                    </div>
+                </v-flex>
+                <v-flex mt-2>
+                <v-checkbox
+                    v-model="confirm"
+                    label="I understand."
+                    required
+                    >
+                </v-checkbox>
+                    <v-btn color="error" outline @click.stop="onDelete()" :disabled="!confirm">Delete All Information</v-btn>
+                    <v-btn v-if="formModify.mac || formModify.smDeviceId || formModify.smUserId" color="error" outline @click.stop="onRestrict()" :disabled="!confirm">Restrict Processing</v-btn>
+                </v-flex>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn color="primary" flat @click.stop="dialog=false; confirm=false">Cancel</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-flex>
 
     </v-layout>
-    </v-container>
+  </v-container>
 </template>
 
 <script>
 import DownloadJS from "downloadjs";
 import JSONbig from "json-bigint";
-
+/**
+PII Component
+@vue
+ */
 export default {
   data() {
     return {
+      msg: "",
       confirm: false,
       formValid: false,
       formModify: {},
@@ -161,31 +132,31 @@ export default {
 
       //SAMPLE FOR TESTING
       /*
-      smDevices: {
-        N_660903245316634908: ["660903245316908972"]
-      },
-      */
+        smDevices: {
+          N_660903245316634908: ["660903245316908972"]
+        },
+        */
       piiRequests: [],
       piiResults: {} // returns an Object (NetworkID) of Objects (PII results)
       //SAMPLE FOR TESTING
       /*
-      piiResults: {
-        N_660903245316634908: {
-          usernames: ["meraki\\miles"],
-          emails: ["testmiles@meraki.com"],
-          macs: ["34:36:3b:cc:a6:76", "ff:ff:ff:aa:bb:cc"],
-          serials: ["C02P71WNG3QR"],
-          imeis: []
-        },
-        N_660903245316635446: {
-          usernames: ["meraki\\miles"],
-          emails: ["testmiles@meraki.com"],
-          macs: ["74:e1:b6:8e:55:6f"],
-          serials: ["DLXH7KQ3DVGG"],
-          imeis: ["01 311700 869146 8"]
+        piiResults: {
+          N_660903245316634908: {
+            usernames: ["meraki\\miles"],
+            emails: ["testmiles@meraki.com"],
+            macs: ["34:36:3b:cc:a6:76", "ff:ff:ff:aa:bb:cc"],
+            serials: ["C02P71WNG3QR"],
+            imeis: []
+          },
+          N_660903245316635446: {
+            usernames: ["meraki\\miles"],
+            emails: ["testmiles@meraki.com"],
+            macs: ["74:e1:b6:8e:55:6f"],
+            serials: ["DLXH7KQ3DVGG"],
+            imeis: ["01 311700 869146 8"]
+          }
         }
-      }
-      */
+        */
     };
   },
   computed: {
@@ -214,9 +185,18 @@ export default {
       try {
         // Merge data into single array for easier processing
         this.piiNets.forEach(net => {
-          let network = { networkId: net.id, networkName: net.name };
-          let smDevices = { smDeviceIds: this.smDevices[net.id] };
-          let merged = { ...network, ...this.piiResults[net.id], ...smDevices };
+          let network = {
+            networkId: net.id,
+            networkName: net.name
+          };
+          let smDevices = {
+            smDeviceIds: this.smDevices[net.id]
+          };
+          let merged = {
+            ...network,
+            ...this.piiResults[net.id],
+            ...smDevices
+          };
           array.push(merged);
         });
         return array;
@@ -229,6 +209,7 @@ export default {
   methods: {
     onSearch() {
       if (this.$refs.form.validate()) {
+        this.msg = "searching..";
         this.fetchPii();
       }
     },
@@ -244,6 +225,12 @@ export default {
         .getPiiKeys(this.org.id, this.form.piiType, this.form.pii)
         .then(res => {
           console.log("fetchPii res", res);
+          if (Object.keys(res) <= 0) {
+            this.msg = "no data found.";
+            return;
+          } else {
+            this.msg = "";
+          }
           this.piiResults = res;
           this.fetchSmDevices();
         });

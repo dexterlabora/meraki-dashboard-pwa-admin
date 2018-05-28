@@ -1,6 +1,5 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-
+import Vue from "vue";
+import Router from "vue-router";
 
 // Chart Components -- TEST
 /*
@@ -11,103 +10,113 @@ import PieChart from '@/components/charts/PieChart'
 */
 
 // General Components
-import Home from '../components/Home'
-import About from '../components/About'
+import Home from "../components/Home";
+import About from "../components/About";
 
 // Meraki Pages
-import DevicesPage from '../components/meraki/devices/DevicesPage'
-import InventoryPage from '../components/meraki/inventory/InventoryPage'
-import LicensesPage from '../components/meraki/licenses/LicensesPage'
-import NetworksPage from '../components/meraki/networks/NetworksPage'
-import CreateNetwork from '../components/meraki/networks/CreateNetwork'
-import NetworkDetails from '../components/meraki/networks/NetworkDetails'
-import TrafficPage from '../components/meraki/traffic/TrafficPage'
-import WirelessPage from '../components/meraki/wireless/WirelessPage'
-import ClientsPage from '../components/meraki/clients/ClientsPage'
-import OrgDevicesPage from '../components/meraki/org-devices/OrgDevicesPage'
-import DeviceDetails from '../components/meraki/org-devices/DeviceDetails'
-import PiiPage from '../components/meraki/pii/PiiPage'
+import DevicesPage from "../components/meraki/devices/DevicesPage";
+import InventoryPage from "../components/meraki/inventory/InventoryPage";
+import LicensesPage from "../components/meraki/licenses/LicensesPage";
+import NetworksPage from "../components/meraki/networks/NetworksPage";
+import CreateNetwork from "../components/meraki/networks/CreateNetwork";
+import NetworkDetails from "../components/meraki/networks/NetworkDetails";
+import TrafficPage from "../components/meraki/traffic/TrafficPage";
+import WirelessPage from "../components/meraki/wireless/WirelessPage";
+import ClientsPage from "../components/meraki/clients/ClientsPage";
+import ClientDetails from "../components/meraki/clients/ClientDetails";
+import ClientUsageHistory from "../components/meraki/clients/ClientUsageHistory";
+import OrgDevicesPage from "../components/meraki/org-devices/OrgDevicesPage";
+import DeviceDetails from "../components/meraki/org-devices/DeviceDetails";
+import PiiPage from "../components/meraki/pii/PiiPage";
 
-Vue.use(Router)
-
-
-
+Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   routes: [
     {
-      name: 'home',
+      name: "home",
       component: Home,
-      path: '/'
+      path: "/"
     },
     {
-      name: 'about',
+      name: "about",
       component: About,
-      path: '/about'
+      path: "/about"
     },
     {
-      name: 'wireless',
+      name: "wireless",
       component: WirelessPage,
-      path: '/wireless',
+      path: "/wireless"
     },
     {
-      name: 'devices',
+      name: "devices",
       component: DevicesPage,
-      path: '/devices'
+      path: "/devices"
     },
     {
-      name: 'licenses',
+      name: "licenses",
       component: LicensesPage,
-      path: '/licenses'
+      path: "/licenses"
     },
     {
-      name: 'inventory',
+      name: "inventory",
       component: InventoryPage,
-      path: '/inventory'
+      path: "/inventory"
     },
     {
-      name: 'networks',
+      name: "networks",
       component: NetworksPage,
-      path: '/networks'
+      path: "/networks"
     },
     {
-      name: 'createNetwork',
+      name: "createNetwork",
       component: CreateNetwork,
-      path: '/createnetwork'
+      path: "/createnetwork"
     },
     {
-      name: 'networkDetails',
+      name: "networkDetails",
       component: NetworkDetails,
-      path: '/networkdetails',
+      path: "/networkdetails",
       props: true
     },
     {
-      name: 'traffic',
+      name: "traffic",
       component: TrafficPage,
-      path: '/traffic'
+      path: "/traffic"
     },
     {
-      name: 'clients',
+      name: "clients",
       component: ClientsPage,
-      path: '/clients'
+      path: "/clients"
     },
     {
-      name: 'orgDevices',
+      name: "orgDevices",
       component: OrgDevicesPage,
-      path: '/orgdevices'
+      path: "/orgdevices"
     },
     {
-      name: 'deviceDetails',
+      name: "deviceDetails",
       component: DeviceDetails,
-      path: '/devicedetails',
+      path: "/devicedetails",
       props: true
     },
     {
-      name: 'pii',
+      name: "pii",
       component: PiiPage,
-      path: '/pii'
+      path: "/pii"
+    },
+    // Testing
+    {
+      name: "clientUsageHistory",
+      component: ClientUsageHistory,
+      path: "/clientUsageHistory"
+    },
+    {
+      name: "clientDetails",
+      component: ClientDetails,
+      path: "/clientDetails",
+      props: true
     }
   ]
-})
-
+});

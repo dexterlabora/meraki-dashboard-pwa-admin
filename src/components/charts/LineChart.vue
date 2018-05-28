@@ -1,11 +1,10 @@
 
 <script>
-import { Line } from 'vue-chartjs'
-
+import { Line } from "vue-chartjs";
 export default {
   extends: Line,
-  props: ['chart-labels', 'chart-data'],
-  data: function () {
+  props: ["data", "labels"],
+  data: function() {
     return {
       chartOptions: {
         legend: {
@@ -17,27 +16,19 @@ export default {
           min: 0
         }
       }
-    }
+    };
+  },
+  mounted() {
+    // this.chartData is created in the mixin.
+    // If you want to pass options please create a local options object
+    console.log("mounted: rendering chart");
+    this.renderChart(this.data, this.chartOptions);
   },
   watch: {
-    chartData: function () {
-      console.log('rendering chart');
-      this.renderChart({
-        labels: this.chartLabels, //['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: this.chartData
-        /*
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: this.chartData, //[40, 39, 10, 40, 39, 80, 40]
-          }
-        ]
-        */
-      }, {responsive: true, maintainAspectRatio: true})
+    data: function() {
+      console.log("watch data: rendering chart");
+      this.renderChart(this.data, this.chartOptions);
     }
   }
-}
-
-
+};
 </script>
