@@ -5,12 +5,10 @@ Supports redirects with custom recursive request function.
 
 / ****************** */
 
-
-// Environment 
+// Environment
 
 // External Configuration File
-var configs = require('./config/merakiConfigs.js');
-
+var configs = require("./config/merakiConfigs.js");
 
 /* Local Configuration alternative
 var configs = {
@@ -21,14 +19,14 @@ var configs = {
 
 /* ****************** */
 
-var express = require('express');
+var express = require("express");
 //var request = require('request'); // Does not properly handle Meraki redirects
-var requestMeraki = require('./request-meraki');
-var path = require('path');
-var serveStatic = require('serve-static');
-var bodyParser = require('body-parser');
-var history = require('connect-history-api-fallback');
-var app = module.exports = express();
+var requestMeraki = require("./request-meraki");
+var path = require("path");
+var serveStatic = require("serve-static");
+var bodyParser = require("body-parser");
+var history = require("connect-history-api-fallback");
+var app = (module.exports = express());
 
 // Development Tools
 /*
@@ -51,7 +49,6 @@ globalLog.on('error', function(request, response) {
 });
 */
 
-
 var jsonParser = bodyParser.json();
 
 // API Route - Will be proxied through Meraki Dashboard API
@@ -60,12 +57,17 @@ var jsonParser = bodyParser.json();
 // Meraki API
 // ********
 //const Meraki = require('./meraki-service');
-const Meraki = require('meraki-service');
-const meraki = new Meraki(configs.apiKey,'http://localhost:' +port+'/api');
+const Meraki = require("meraki-service");
+const meraki = new Meraki(configs.apiKey, "http://localhost:" + port + "/api");
 
 // API Proxy Route - Will be proxied through Meraki Dashboard API
-app.use('/api', jsonParser, function (req, res){
-  console.log('API request ', req.method, req.url, req.method != 'GET' ? req.body:'');
+app.use("/api", jsonParser, function(req, res) {
+  console.log(
+    "API request ",
+    req.method,
+    req.url,
+    req.method != "GET" ? req.body : ""
+  );
   var options = {
     qs: req.query,
     url: configs.apiUrl + req.url,
@@ -74,20 +76,18 @@ app.use('/api', jsonParser, function (req, res){
     headers: {}
   };
   //console.log('/api req.headers', req.headers);
-  if(req.headers['x-cisco-meraki-api-key']){
-    options.headers['X-Cisco-Meraki-API-Key'] = req.headers['x-cisco-meraki-api-key'];
+  if (req.headers["x-cisco-meraki-api-key"]) {
+    options.headers["X-Cisco-Meraki-API-Key"] =
+      req.headers["x-cisco-meraki-api-key"];
     //console.log("New headers sent", options.headers );
   }
-  
 
-  meraki.proxy(options).then((response) => {
+  meraki.proxy(options).then(response => {
     console.log("server: proxy response.data", response);
     res.send(response);
     res.end();
   });
-
 });
-
 
 // Home page, default route
 
@@ -102,15 +102,16 @@ app.use(serveStatic(__dirname + "/dist"));
 
 // handle every other route with index.html, which will contain
 // a script tag to your application's JavaScript file(s).
-app.get('*', function (request, response) {
-  response.sendFile(path.resolve(__dirname, 'index.html'));
+app.get("*", function(request, response) {
+  response.sendFile(path.resolve(__dirname, "index.html"));
 });
 
 // Start server
 var port = process.env.PORT || 8088;
 var server = app.listen(port, () => {
-  console.log('Server Running on http://localhost:'+port+'/');
-  console.log('Meraki API Proxy: http://localhost:'+port+'/api');
-  console.log('Default API Endpoint: ', configs.apiUrl);
+  console.log("listening on port ", server.address().port);
+  console.log(
+    "Meraki API Proxy: http://localhost:" + server.address().port + "/api"
+  );
+  console.log("Default API Endpoint: ", configs.apiUrl);
 });
-

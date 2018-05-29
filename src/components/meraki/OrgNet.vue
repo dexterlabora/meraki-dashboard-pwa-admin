@@ -57,6 +57,7 @@ export default {
       this.$store.commit("setNet", this.net);
     },
     orgs() {
+      this.org = this.orgs[0]; // set default org
       this.fetchNets();
       this.$store.commit("setOrgs", this.orgs);
     },
@@ -73,8 +74,8 @@ export default {
     // Set default selections based on state
     this.orgs = this.$store.state.orgs || [{ id, name }];
     this.nets = this.$store.state.nets || [{ id, name }];
-    this.org = this.$store.state.org || {};
-    this.net = this.$store.state.net || {};
+    this.org = this.$store.state.org || this.orgs[0] || {};
+    //this.net = this.$store.state.net || this.nets[0] || {};
     this.fetchOrgs();
   },
   methods: {
