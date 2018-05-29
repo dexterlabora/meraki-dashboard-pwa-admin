@@ -24,7 +24,7 @@
     "json-bigint": "^0.2.3",
     "material-design-icons-iconfont": "^3.0.3",
     "material-icons": "^0.1.0",
-    "meraki-service": "file:../meraki-service",
+    "meraki-service": "git+https://github.com/dexterlabora/meraki-service.git",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.16",
     "morgan": "^1.9.0",
@@ -90,9 +90,5 @@
     "node": "8.9.4",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }
