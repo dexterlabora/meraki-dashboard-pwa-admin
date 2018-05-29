@@ -1,12 +1,18 @@
 <template>
 
-<v-container fluid>
+<v-container>
   <v-layout row wrap>
-    <v-flex  xs12 sm6>
-       <v-flex xs6>
-        <v-subheader>Timespan</v-subheader>
-      </v-flex>
-       <v-flex xs12 sm6>    
+    <v-flex  xs12 md12>
+      <h2>Clients</h2>
+      <p>
+        Search the network for clients who have connected to a device type. You can then easily update the Group Policy of selected devices.
+        Click on the info icon to get additional details about the client.
+      </p>
+      <p><i>Note: This script must query every device in the network to gather the clients. It then queries each client to gather policy details. It may take a minute to run. </i></p>
+    </v-flex>
+    <v-flex xs12 md6>
+       <v-flex xs12 md5>
+        <v-subheader>Timespan</v-subheader>   
         <v-select
             :items="timespanOptions"
             v-model="timespan"
@@ -14,10 +20,8 @@
             single-line
           ></v-select>
       </v-flex>
-      <v-flex xs6>
-        <v-subheader>Device Type</v-subheader>
-      </v-flex>
-      <v-flex xs12 sm6>    
+      <v-flex xs12 md5>
+        <v-subheader>Device Type</v-subheader> 
         <v-select
             :items="deviceTypeOptions"
             v-model="deviceType"
@@ -26,50 +30,48 @@
           ></v-select>
       </v-flex>
       <v-flex>
-         <!--v-btn @click.stop="fetchClientsForNetwork">Get Clients</v-btn-->
+         <v-btn color="primary" @click.stop="fetchClientsForNetwork">Search for Clients</v-btn>
       </v-flex>
-      <v-flex xs6>
-        <v-subheader>Group Policy</v-subheader>
-      </v-flex>
-      <v-flex sm4>
-        <v-select
-          :items="policies"
-          item-text="name"
-          item-value="groupPolicyId"
-          v-model="policy"
-          label="Select Policy"
-          single-line
-        ></v-select>
-      </v-flex>
-      <v-flex xs4>
+      
+      <v-flex xs12 md12 pt-4>
+        <h3>Update Policy Settings</h3>
+        <v-flex xs612 md5>
+          <i>Select clients to apply policy</i>
+          <v-select
+            :items="policies"
+            item-text="name"
+            item-value="groupPolicyId"
+            v-model="policy"
+            label="Select Group Policy"
+            single-line
+          ></v-select>
+        </v-flex>
+      <v-flex xs6 md4>
         <v-btn color="warning" dark slot="activator" class="mb-2" @click="onUpdateClients()">Update Clients</v-btn>
       </v-flex>
-      <v-flex sm6 hidden-xs-only> 
+      <v-flex sm6 md12 hidden-xs-only> 
          <div class="text-xs-center">
-            <v-chip v-for="c in selectedClients" :key="c.mac" color="primary"  text-color="white">{{c.description}}</v-chip>
+            <v-chip v-for="c in selectedClients" :key="c.mac" color="gray"  text-color="black">{{c.description}}</v-chip>
           </div>
       </v-flex>
-
+    </v-flex>
     </v-flex>
 
    
-    <v-flex xs12 sm6 >
+    <v-flex xs12 sm6>
       
       <v-card>
-        <v-list two-line subheader>
-          <v-list-group
-            
-            v-for="(client, index) in clients"
-            :key="index"
-            no-action
-          >
-            <v-list-tile slot="activator">
+        <v-list two-line>
+          <template v-for="(client, index) in clients">
+            <v-list-tile
+              :key="index"
+            >
               <v-list-tile-action>
                 <v-checkbox v-model="selectedClients" :value="client"></v-checkbox>
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title>{{ client.description ? client.description : client.mac}} </v-list-tile-title>
-                <v-list-tile-sub-title><v-chip v-if="client.policy" small>{{ client.policy.name ? client.policy.name : client.policy.type }}</v-chip></v-list-tile-sub-title>
+                <v-list-tile-sub-title><v-chip v-if="client.policy" small color="green">{{ client.policy.name ? client.policy.name : client.policy.type }}</v-chip></v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
                 <v-btn icon ripple :router="true" :to="{ name: 'clientDetails', params: {client: client}}">
@@ -77,6 +79,7 @@
                 </v-btn>
               </v-list-tile-action>
             </v-list-tile>
+            <!-- Removed dropdown details now that a details page was created
             <v-list-tile >
               <v-list-tile-content>
                 <v-list-tile-title>Network Details</v-list-tile-title>
@@ -114,13 +117,18 @@
                 <v-list-tile-sub-title>{{ client.policy.name }}</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
+           
             </template>
-            
-          </v-list-group>
-        </v-list>
+            --> 
+
+          </template>
+          </v-list>
+      
+        
       </v-card>
       
     </v-flex>
+
   </v-layout>
 </v-container>
 </template>
@@ -267,12 +275,6 @@ export default {
   watch: {
     net() {
       this.fetchPolicies();
-      this.fetchClientsForNetwork();
-    },
-    timespan() {
-      this.fetchClientsForNetwork();
-    },
-    deviceType() {
       this.fetchClientsForNetwork();
     }
   },
