@@ -84,7 +84,7 @@ export default {
       this.$meraki
         .getOrganizations()
         .then(res => {
-          this.orgs = JSON.parse(res);
+          this.orgs = res;
           console.log("orgs:", this.orgs);
           console.log("orgs[0]:", this.orgs[0]);
           this.org = this.org ? this.org : this.orgs[0]; // set default
