@@ -73788,7 +73788,6 @@ module.exports = function defineProperty(it, key, desc){
 /* 453 */
 /***/ (function(module, exports, __webpack_require__) {
 
-
 /**
 
 
@@ -73815,13 +73814,14 @@ $ Organizations:  [ { id: 549236, name: 'Meraki DevNet Sandbox' } ]
 //const admins = require('./endpoints/admins');
 
 const axios = __webpack_require__(454);
-const JSONbig = __webpack_require__(23)({ "storeAsString": true });
-
+const JSONbig = __webpack_require__(23)({ storeAsString: true });
 
 // Meraki Error Handler (parses the error message within responses)
 function _handleError(e) {
   console.log("error in Meraki API call: ", e);
-  if (e.message) { e = e.message }
+  if (e.message) {
+    e = e.message;
+  }
   if (e.response) {
     if (e.response.data) {
       // Meraki specific error message
@@ -73855,24 +73855,24 @@ function _handleError(e) {
  * @module Meraki
  */
 class merakiService {
-
   /**
    * Initialize a Meraki API Service
    * @constructor
    * @param {string} apiKey - The Meraki API key
-   * @param {string=} baseUrl - The base Meraki API URL. Uses default:`https://api.meraki.com/api/v0`
+   * @param {string} baseUrl - The base Meraki API URL. Uses default:`https://api.meraki.com/api/v0`
    * @returns {}
    */
   constructor(apiKey, baseUrl) {
     this._apiKey = Object({"NODE_ENV":"production"}).API_KEY || apiKey;
-    this._baseUrl = Object({"NODE_ENV":"production"}).BASE_URL || baseUrl || 'https://api.meraki.com/api/v0';
+    this._baseUrl =
+      Object({"NODE_ENV":"production"}).BASE_URL || baseUrl || "https://api.meraki.com/api/v0";
     this._data; // stores request data to handle redirects properly
 
     this.initMeraki();
   }
 
   // *************
-  // Intialize API 
+  // Intialize API
   // *************
 
   /**
@@ -73881,29 +73881,27 @@ class merakiService {
   initMeraki() {
     this.meraki = axios.create({
       baseURL: this._baseUrl,
-      maxRedirects: 0,
+      //maxRedirects: 0,
       headers: {
-        'X-Cisco-Meraki-API-Key': this._apiKey,
-        'Content-Type': "application/json"
-      }
-
+        "X-Cisco-Meraki-API-Key": this._apiKey,
+        "Content-Type": "application/json"
+      },
+      transformResponse: [JSONbig.parse]
     });
 
-    this.meraki.interceptors.request.use(
-      config => {
-        //console.log('config', config);
-        //console.log('config.body', config.body);
-        //console.log('config headers', config.headers)
-        //console.log('config request', config.request)
-        config.validateStatus = function (status) {
-          return status == '308' || '307' || '302' || '301'; // do not throw error for redirects
-        }
+    this.meraki.interceptors.request.use(config => {
+      //console.log('config', config);
+      //console.log('config.body', config.body);
+      //console.log('config headers', config.headers)
+      //console.log('config request', config.request)
+      config.validateStatus = function(status) {
+        return status == "308" || "307" || "302" || "301"; // do not throw error for redirects
+      };
 
-        this._data = config.body; // cached request to handle redirects
-        this._headers = config.headers; // cached request to handle redirects
-        return config;
-      }
-    )
+      this._data = config.body; // cached request to handle redirects
+      this._headers = config.headers; // cached request to handle redirects
+      return config;
+    });
 
     this.meraki.interceptors.response.use(
       res => {
@@ -73912,18 +73910,21 @@ class merakiService {
         //console.log('Meraki Service res:', res.request.path, res.status);
         //console.log('Meraki Service response res.request', res.request);
 
-        if ((res.status == '308' || '307' || '302' || '301') && res.headers.location) {
+        if (
+          (res.status == "308" || "307" || "302" || "301") &&
+          res.headers.location
+        ) {
           //console.log('REDIRECT')
           var options = {
             url: res.headers.location,
             data: data,
             method: res.request.method,
-            headers: headers,
+            headers: headers
           };
           //console.log('options', options);
-          return this.meraki(options).then((res) => {
+          return this.meraki(options).then(res => {
             //console.log('redirect res', res);
-            return res
+            return res;
           });
         } else {
           //const data = this._data;
@@ -73934,7 +73935,6 @@ class merakiService {
         return _handleError(error);
       }
     );
-
   }
 
   /**
@@ -73966,7 +73966,6 @@ class merakiService {
     this._apiKey = apiKey;
     this.initMeraki();
   }
-
 
   /**
    * get current API base URL
@@ -74006,8 +74005,6 @@ class merakiService {
     this._baseUrl = baseUrl;
     this.initMeraki();
   }
-
-
 }
 
 // ****************
@@ -74020,10 +74017,22 @@ Object.assign(merakiService.prototype, __webpack_require__(473));
 Object.assign(merakiService.prototype, __webpack_require__(474));
 Object.assign(merakiService.prototype, __webpack_require__(475));
 Object.assign(merakiService.prototype, __webpack_require__(476));
-Object.assign(merakiService.prototype, __webpack_require__(477));
-Object.assign(merakiService.prototype, __webpack_require__(478));
-Object.assign(merakiService.prototype, __webpack_require__(479));
-Object.assign(merakiService.prototype, __webpack_require__(480));
+Object.assign(
+  merakiService.prototype,
+  __webpack_require__(477)
+);
+Object.assign(
+  merakiService.prototype,
+  __webpack_require__(478)
+);
+Object.assign(
+  merakiService.prototype,
+  __webpack_require__(479)
+);
+Object.assign(
+  merakiService.prototype,
+  __webpack_require__(480)
+);
 Object.assign(merakiService.prototype, __webpack_require__(481));
 Object.assign(merakiService.prototype, __webpack_require__(482));
 Object.assign(merakiService.prototype, __webpack_require__(483));
@@ -74038,6 +74047,7 @@ Object.assign(merakiService.prototype, __webpack_require__(489));
 Object.assign(merakiService.prototype, __webpack_require__(490));
 
 module.exports = merakiService;
+
 
 /***/ }),
 /* 454 */
@@ -75574,145 +75584,169 @@ module.exports = networks;
 /* 482 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const JSONbig = __webpack_require__(23)({ "storeAsString": true });
+const JSONbig = __webpack_require__(23)({ storeAsString: true });
 
-const handleBigInt = (data) => {
-    try {
-        return JSON.parse(JSONBigInt.parse(data));
-    } catch (err) {
-        return data
-    }
-}
+const handleBigInt = data => {
+  try {
+    return JSON.parse(JSONBigInt.parse(data));
+  } catch (err) {
+    return data;
+  }
+};
+
 /**
  * Organizations
  * @module Organizations
  */
 const organizations = {
-    /**
-     * List the Organizations based on the API key
-     */
-    getOrganizations() {
-        return this.meraki.get('/organizations', { transformResponse: [handleBigInt] }).then((res) => res.data);
-    },
+  /**
+   * List the Organizations based on the API key
+   */
+  getOrganizations() {
+    return (
+      this.meraki
+        //.get("/organizations", { transformResponse: [handleBigInt] })
+        .get("/organizations")
+        .then(res => res.data)
+    );
+  },
 
+  /**
+   * Return a single organization
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getOrganization(orgId) {
+    return this.meraki.get("/organizations/" + orgId).then(res => res.data);
+  },
 
-    /**
-     * Return a single organization
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getOrganization(orgId) {
-        return this.meraki.get('/organizations/' + orgId).then((res) => res.data);
-    },
+  /**
+   * Update an organization
+   * @memberof module:Organizations
+   * @param {*} orgId
+   * @param {*} body
+   */
+  updateOrganization(orgId, body) {
+    return this.meraki
+      .put("/organizations/" + orgId, body)
+      .then(res => res.data);
+  },
 
+  /**
+   * Create an organization
+   * @memberof module:Organizations
+   * @param {*} body
+   */
+  createOrganization(body) {
+    return this.meraki.post("/organizations/", body).then(res => res.data);
+  },
 
-    /**
-     * Update an organization
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     * @param {*} body 
-     */
-    updateOrganization(orgId, body) {
-        return this.meraki.put('/organizations/' + orgId, body).then((res) => res.data);
-    },
+  /**
+   * Create an organization by cloning
+   * @memberof module:Organizations
+   * @param {*} orgId
+   * @param {*} body
+   */
+  createOrganizationClone(orgId, body) {
+    return this.meraki
+      .post("/organizations/" + orgId + "/clone", body)
+      .then(res => res.data);
+  },
 
-    /**
-     * Create an organization
-     * @memberof module:Organizations
-     * @param {*} body 
-     */
-    createOrganization(body) {
-        return this.meraki.post('/organizations/', body).then((res) => res.data);
-    },
+  /**
+   * Claim order, license key, or order into an organization
+   * @memberof module:Organizations
+   * @param {*} orgId
+   * @param {*} body
+   */
+  claimOrderLicenseSerial(orgId, body) {
+    return this.meraki
+      .post("/organizations/" + orgId + "/claim", body)
+      .then(res => res.data);
+  },
 
-    /**
-     * Create an organization by cloning
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     * @param {*} body 
-     */
-    createOrganizationClone(orgId, body) {
-        return this.meraki.post('/organizations/' + orgId + '/clone', body).then((res) => res.data);
-    },
+  /**
+   * Return licenses for an organization
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getLicenseState(orgId) {
+    return this.meraki
+      .get("/organizations/" + orgId + "/licenseState")
+      .then(res => res.data);
+  },
 
-    /**
-     * Claim order, license key, or order into an organization
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     * @param {*} body 
-     */
-    claimOrderLicenseSerial(orgId, body) {
-        return this.meraki.post('/organizations/' + orgId + '/claim', body).then((res) => res.data);
-    },
+  /**
+   * Return inventory for an organization
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getInventory(orgId) {
+    return this.meraki
+      .get("/organizations/" + orgId + "/inventory")
+      .then(res => res.data);
+  },
 
-    /**
-     * Return licenses for an organization
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getLicenseState(orgId) {
-        return this.meraki.get('/organizations/' + orgId + '/licenseState').then((res) => res.data);
-    },
+  /**
+   * Return devices for an organization and their statuses
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getOrgDevices(orgId) {
+    return this.meraki
+      .get("/organizations/" + orgId + "/deviceStatuses")
+      .then(res => res.data);
+  },
 
-    /**
-     * Return inventory for an organization
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getInventory(orgId) {
-        return this.meraki.get('/organizations/' + orgId + '/inventory').then((res) => res.data);
-    },
+  /**
+   * Return SNMP settings
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getSnmpSettings(orgId) {
+    return this.meraki
+      .get("/organizations/" + orgId + "/snmp")
+      .then(res => res.data);
+  },
 
-    /**
-     * Return devices for an organization and their statuses
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getOrgDevices(orgId) {
-        return this.meraki.get('/organizations/' + orgId + '/deviceStatuses').then((res) => res.data);
-    },
+  /**
+   * Update SNMP settings
+   * @memberof module:Organizations
+   * @param {*} orgId
+   * @param {*} body
+   */
+  updateSnmpSettings(orgId, body) {
+    return this.meraki
+      .put("/organizations/" + orgId + "/snmp", body)
+      .then(res => res.data);
+  },
 
-    /**
-     * Return SNMP settings
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getSnmpSettings(orgId) {
-        return this.meraki.get('/organizations/' + orgId + '/snmp').then((res) => res.data);
-    },
+  /**
+   * Return third party VPN peers
+   * @memberof module:Organizations
+   * @param {*} orgId
+   */
+  getThirdPartyVpnPeers(orgId) {
+    return this.meraki
+      .get("/organizations/" + orgId + "/thirdPartyVPNPeers")
+      .then(res => res.data);
+  },
 
-    /**
-     * Update SNMP settings
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     * @param {*} body 
-     */
-    updateSnmpSettings(orgId, body) {
-        return this.meraki.put('/organizations/' + orgId + '/snmp', body).then((res) => res.data);
-    },
-
-    /**
-     * Return third party VPN peers
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     */
-    getThirdPartyVpnPeers(orgId) {
-        return this.meraki.get('/organizations/' + orgId + '/thirdPartyVPNPeers').then((res) => res.data);
-    },
-
-    /**
-     * Return third party VPN peers
-     * @memberof module:Organizations
-     * @param {*} orgId 
-     * @param {*} body 
-     */
-    updateThirdPartyVpnPeers(orgId, body) {
-        return this.meraki.put('/organizations/' + orgId + '/thirdPartyVPNPeers', body).then((res) => res.data);
-    }
-
-}
+  /**
+   * Return third party VPN peers
+   * @memberof module:Organizations
+   * @param {*} orgId
+   * @param {*} body
+   */
+  updateThirdPartyVpnPeers(orgId, body) {
+    return this.meraki
+      .put("/organizations/" + orgId + "/thirdPartyVPNPeers", body)
+      .then(res => res.data);
+  }
+};
 
 module.exports = organizations;
+
 
 /***/ }),
 /* 483 */
@@ -76394,16 +76428,18 @@ const custom = {
      */
     async getNetworkIdForDeviceMac(orgId, mac) {
         const device = await this.getOrgDevices(orgId).then(res => {
-
-            const devices = [] = res.filter(function (obj) {
-                return obj.mac == mac;
-            });
-            console.log('filtered devices ', devices);
-            console.log('filtered network ID ', devices[0].networkId);
-            return devices[0];
-
+            try {
+                const devices = [] = res.filter(obj => {
+                    return obj.mac == mac;
+                });
+                console.log('filtered devices ', devices);
+                console.log('filtered network ID ', devices[0].networkId);
+                return devices[0];
+            } catch (error) {
+                console.log('meraki-service: getNetworkIdForDeviceMac error', error);
+            }
         });
-        return clients;
+        return device.networkId;
         /*
         let res = {
             status: 200,
@@ -98310,4 +98346,4 @@ module.exports = function escape(url) {
 
 /***/ })
 ]);
-//# sourceMappingURL=vendor.e14a1bb3336f2e08121e.js.map
+//# sourceMappingURL=vendor.ce111bd9735178276524.js.map
