@@ -37,8 +37,14 @@ export default {
     return {
       orgs: [],
       nets: [],
-      org: {},
-      net: {}
+      org: {
+        id: "",
+        name: ""
+      },
+      net: {
+        id: "",
+        name: ""
+      }
     };
   },
   computed: {
@@ -74,7 +80,7 @@ export default {
     // Set default selections based on state
     this.orgs = this.$store.state.orgs || [{ id, name }];
     this.nets = this.$store.state.nets || [{ id, name }];
-    this.org = this.$store.state.org || this.orgs[0] || {};
+    this.org = this.orgs[0] || this.$store.state.org || {};
     //this.net = this.$store.state.net || this.nets[0] || {};
     this.fetchOrgs();
   },

@@ -139,8 +139,11 @@ export default {
     },
     initMeraki() {
       this.$meraki.apiKey = this.apiKey;
-      console.log('initMeraki this.$meraki.meraki.interceptors', this.$meraki.meraki.interceptors)
-      
+      console.log(
+        "initMeraki this.$meraki.meraki.interceptors",
+        this.$meraki.meraki.interceptors
+      );
+
       this.$meraki.meraki.interceptors.request.use(
         conf => {
           eventHub.$emit("before-request");
@@ -159,8 +162,9 @@ export default {
           eventHub.$emit("after-response");
           this.loading = false;
           // notify on changes made
-          console.log('inerceptor response.config.method', response.config.method);
-          if (['post', 'put', 'delete'].indexOf(response.config.method) >= 0) {       
+          console.log("App inerceptor response", response);
+          let method = response.config.method || "";
+          if (["post", "put", "delete"].indexOf(response.config.method) >= 0) {
             this.notify("success", "Changes Saved!");
           }
           return response;
@@ -172,12 +176,14 @@ export default {
           return Promise.reject(error);
         }
       );
-      console.log('initMeraki this.$meraki.meraki.interceptors UPDATED', this.$meraki.meraki.interceptors)
+      console.log(
+        "initMeraki this.$meraki.meraki.interceptors UPDATED",
+        this.$meraki.meraki.interceptors
+      );
     }
   },
   created: function() {
     this.initMeraki();
-
   },
   beforeDestroy: function() {
     eventHub.$off("meraki-loading", loading => (this.loading = loading));

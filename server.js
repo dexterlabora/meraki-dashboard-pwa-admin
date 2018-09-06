@@ -6,7 +6,7 @@ Supports redirects with custom recursive request function.
 / ****************** */
 
 // Environment
-
+var port = process.env.PORT || 8088;
 // External Configuration File
 var configs = require("./config/merakiConfigs.js");
 
@@ -59,7 +59,7 @@ var jsonParser = bodyParser.json();
 //const Meraki = require('./meraki-service');
 const Meraki = require("meraki-service");
 const meraki = new Meraki(configs.apiKey, "http://localhost:" + port + "/api");
-
+//const meraki = new Meraki(configs.apiKey);
 // API Proxy Route - Will be proxied through Meraki Dashboard API
 app.use("/api", jsonParser, function(req, res) {
   console.log(
@@ -70,9 +70,10 @@ app.use("/api", jsonParser, function(req, res) {
   );
   var options = {
     qs: req.query,
-    url: configs.apiUrl + req.url,
+    baseURL: configs.apiUrl,
+    url: req.url,
     method: req.method,
-    body: req.body,
+    data: req.body,
     headers: {}
   };
   //console.log('/api req.headers', req.headers);
@@ -83,7 +84,7 @@ app.use("/api", jsonParser, function(req, res) {
   }
 
   meraki.proxy(options).then(response => {
-    console.log("server: proxy response.data", response);
+    //console.log("server: proxy response", response);
     res.send(response);
     res.end();
   });
@@ -107,7 +108,7 @@ app.get("*", function(request, response) {
 });
 
 // Start server
-var port = process.env.PORT || 8088;
+
 var server = app.listen(port, () => {
   console.log("listening on port ", server.address().port);
   console.log(
