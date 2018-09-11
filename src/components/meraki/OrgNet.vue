@@ -35,8 +35,6 @@
 export default {
   data: function() {
     return {
-      orgs: [],
-      nets: [],
       org: {
         id: "",
         name: ""
@@ -50,6 +48,12 @@ export default {
   computed: {
     apiKey: function() {
       return this.$store.state.apiKey;
+    },
+    orgs: function() {
+      return this.$store.state.orgs;
+    },
+    nets: function() {
+      return this.$store.state.nets;
     }
   },
   watch: {
@@ -78,19 +82,17 @@ export default {
   },
   created: function() {
     // Set default selections based on state
-    this.orgs = this.$store.state.orgs || [{ id, name }];
-    this.nets = this.$store.state.nets || [{ id, name }];
     this.org = this.orgs[0] || this.$store.state.org || {};
     //this.net = this.$store.state.net || this.nets[0] || {};
     this.fetchOrgs();
   },
   methods: {
     fetchOrgs: function() {
-      this.orgs = [];
       this.$meraki
         .getOrganizations()
         .then(res => {
-          this.orgs = res;
+          //this.orgs = res;
+          this.$store.commit("setOrgs", res);
           console.log("orgs:", this.orgs);
           console.log("orgs[0]:", this.orgs[0]);
           this.org = this.org ? this.org : this.orgs[0]; // set default
@@ -100,9 +102,8 @@ export default {
         });
     },
     fetchNets: function() {
-      this.nets = [];
       this.$meraki.getNetworks(this.org.id).then(res => {
-        this.nets = res;
+        this.$store.commit("setNets", res);
         this.net =
           this.net.organizationId == this.org.id ? this.net : this.nets[0]; // set default
       });
