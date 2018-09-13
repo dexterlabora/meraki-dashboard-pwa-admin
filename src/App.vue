@@ -68,6 +68,10 @@
             <v-list-tile-title>PII</v-list-tile-title>
           </v-list-tile>
 
+          <v-list-tile :router="true" :to="{ name: 'ssids'}" v-if="adminMode">
+            <v-list-tile-title>SSIDs</v-list-tile-title>
+          </v-list-tile>
+
           <v-list-tile :router="true" :to="{ name: 'about'}">
             <v-list-tile-title>About</v-list-tile-title>
           </v-list-tile>
@@ -121,6 +125,9 @@ export default {
         "X-Cisco-Meraki-API-Key"
       ] = this.apiKey;
       this.$meraki.apiKey = this.apiKey;
+    },
+    loading: function() {
+      this.$store.commit("setLoading", this.loading);
     }
   },
   computed: {

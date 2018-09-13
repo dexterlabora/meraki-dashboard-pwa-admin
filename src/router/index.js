@@ -28,6 +28,7 @@ import ClientUsageHistory from "../components/meraki/clients/ClientUsageHistory"
 import OrgDevicesPage from "../components/meraki/org-devices/OrgDevicesPage";
 import DeviceDetails from "../components/meraki/org-devices/DeviceDetails";
 import PiiPage from "../components/meraki/pii/PiiPage";
+import SsidsPage from "../views/SsidsPage";
 
 Vue.use(Router);
 
@@ -117,6 +118,11 @@ export default new Router({
       component: ClientDetails,
       path: "/clientDetails",
       props: true
+    },
+    {
+      name: "ssids",
+      component: SsidsPage,
+      path: "/ssids"
     }
   ]
 });

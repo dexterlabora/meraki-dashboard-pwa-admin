@@ -9,7 +9,7 @@
           item-text="name"
           item-value="id"
           return-object
-          v-model="org"
+          v-model="form.org"
           label="Organizations"
         ></v-select>
       </v-list-tile-content>
@@ -21,7 +21,7 @@
           item-text="name"
           item-value="id"
           return-object
-          v-model="net"
+          v-model="form.net"
           label="Networks"
         ></v-select>
       </v-list-tile-content>
@@ -35,77 +35,88 @@
 export default {
   data: function() {
     return {
-      org: {
-        id: "",
-        name: ""
-      },
-      net: {
-        id: "",
-        name: ""
+      form: {
+        org: {
+          id: "",
+          name: ""
+        },
+        net: {
+          id: "",
+          name: ""
+        }
       }
     };
   },
   computed: {
-    apiKey: function() {
-      return this.$store.state.apiKey;
-    },
     orgs: function() {
       return this.$store.state.orgs;
     },
     nets: function() {
       return this.$store.state.nets;
+    },
+    org: function() {
+      return this.$store.state.org;
+    },
+    net: function() {
+      return this.$store.state.net;
     }
   },
   watch: {
-    org() {
-      // New org selected, fetch related networks
-      this.fetchNets();
-      this.$store.commit("setOrg", this.org);
-    },
-    net() {
-      console.log("orgnet update state: net", this.net);
-      this.$store.commit("setNet", this.net);
-    },
-    orgs() {
-      this.org = this.orgs[0]; // set default org
-      this.fetchNets();
-      this.$store.commit("setOrgs", this.orgs);
-    },
-    nets() {
-      console.log("orgnet update state: net", this.nets);
-      this.$store.commit("setNets", this.nets);
-    },
     apiKey() {
       console.log("orgNet apiKey updated, fetching orgs");
       this.fetchOrgs();
+    },
+    "form.org"(newVal, oldVal) {
+      this.$store.commit("setOrg", newVal);
+      this.fetchNets();
+    },
+    "form.net"(newVal, oldVal) {
+      this.$store.commit("setNet", newVal);
+    },
+    nets() {
+      // set default net
+      let foundNet;
+      foundNet = this.nets.find(n => {
+        return n.id === this.net.id;
+      });
+      console.log("foundNet", foundNet);
+      if (!foundNet) {
+        console.log(
+          "net not found in state for this nets list, setting first net"
+        );
+        this.form.net = this.nets[0];
+      }
+    },
+    orgs() {
+      // set default org
+      let foundOrg;
+      foundOrg = this.orgs.find(o => {
+        return o.id === this.org.id;
+      });
+      console.log("foundOrg", foundOrg);
+      if (!foundOrg) {
+        console.log(
+          "org not found in state for this orgs list, setting first org"
+        );
+        this.form.org = this.orgs[0];
+      }
     }
   },
   created: function() {
     // Set default selections based on state
-    this.org = this.orgs[0] || this.$store.state.org || {};
-    //this.net = this.$store.state.net || this.nets[0] || {};
+    this.form.org = this.org; //|| this.orgs[0] || {};
+    this.form.net = this.net; //|| this.nets[0] || {};
     this.fetchOrgs();
   },
   methods: {
     fetchOrgs: function() {
-      this.$meraki
-        .getOrganizations()
-        .then(res => {
-          //this.orgs = res;
-          this.$store.commit("setOrgs", res);
-          console.log("orgs:", this.orgs);
-          console.log("orgs[0]:", this.orgs[0]);
-          this.org = this.org ? this.org : this.orgs[0]; // set default
-        })
-        .catch(e => {
-          console.log("fetchOrgs error", e);
-        });
+      this.$meraki.getOrganizations().then(res => {
+        this.$store.commit("setOrgs", res);
+      });
     },
     fetchNets: function() {
-      this.$meraki.getNetworks(this.org.id).then(res => {
+      this.$meraki.getNetworks(this.form.org.id).then(res => {
         this.$store.commit("setNets", res);
-        this.net =
-          this.net.organizationId == this.org.id ? this.net : this.nets[0]; // set default
       });
     }
   }

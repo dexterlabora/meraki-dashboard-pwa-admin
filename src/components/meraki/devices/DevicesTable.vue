@@ -162,7 +162,13 @@ export default {
     },
     selected() {
       if (this.selected.length === 1) {
-        this.editedItem = this.selected[0];
+        this.editedItem = _.pick(this.selected[0], [
+          "name",
+          "tags",
+          "lat",
+          "lng",
+          "moveMapMarker"
+        ]);
       }
     }
   },
@@ -179,20 +185,24 @@ export default {
       }, 300);
     },
     save() {
-      let serials = this.selected.map(s => s.serial);
-      console.log("serials", serials);
+      let devices = this.selected; // this.selected.map(s => s.serial);
+
+      //console.log("serials", serials);
       let options = this.editedItem;
-      this.updateDevices(this.net.id, serials, options);
+      this.updateDevices(devices, options);
+      // reset edit form
+      this.editedItem = {};
       this.close();
     },
-    updateDevices: async function(netId, serials, options) {
-      for (let serial of serials) {
+    updateDevices: async function(devices, options) {
+      for (let d of devices) {
+        console.log("Updating Device: ", d["networkId"], d["serial"], options);
         const update = await this.$meraki
-          .updateDevice(this.net.id, serial, options)
+          .updateDevice(d["networkId"], d["serial"], options)
           .then(res => {
             return res;
           });
-        console.log("Device Updated: ", serial, update);
+        console.log("Device Updated: ", d["networkId"], d["serial"], update);
       }
       this.fetchDevices();
     },

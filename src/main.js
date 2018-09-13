@@ -58,7 +58,8 @@ const store = new Vuex.Store({
     nets: [],
     clients: [],
     apiKey: "",
-    adminMode: false
+    adminMode: false,
+    loading: false
   },
   mutations: {
     setOrg: (state, payload) => (state.org = payload),
@@ -67,7 +68,8 @@ const store = new Vuex.Store({
     setNets: (state, payload) => (state.nets = payload),
     setClients: (state, payload) => (state.clients = payload),
     setApiKey: (state, payload) => (state.apiKey = payload),
-    setAdminMode: (state, payload) => (state.adminMode = payload)
+    setAdminMode: (state, payload) => (state.adminMode = payload),
+    setLoading: (state, payload) => (state.loading = payload)
   },
   plugins: [createPersistedState()]
 });
