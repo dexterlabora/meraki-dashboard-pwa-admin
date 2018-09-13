@@ -15,7 +15,7 @@
     <v-toolbar :color="!adminMode ? 'success' : 'warning'">
       <v-toolbar-side-icon @click.native.stop="showNav = !showNav"></v-toolbar-side-icon>
       <v-spacer></v-spacer>
-      <v-toolbar-title class="white--text">Meraki API PWA Demo </v-toolbar-title>
+      <v-toolbar-title class="white--text">Meraki Tools</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items >
         <settings></settings> 
