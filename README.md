@@ -108,19 +108,5 @@ I built this to explore Meraki APIs and at the same time experiment with VueJS. 
 
 www.Meraki.io
 
-Copyright (c) 2018 Cisco and/or its affiliates.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at:
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-All of your repos should contain a LICENSE file with the Apache 2.0 license text in it.
-All of your repos should also contain a CONTRIBUTING file explaining how to contribute and what’s required. For this case, we will require all contributions be licensed under the Apache 2.0 license and that the contributor provide a Developer Certificate of Origin or DCO when they submit. See here for a good example of a contributing file using Apache and the DCO from the Chef project:
-https://github.com/chef/chef/blob/master/CONTRIBUTING.md
-We will also use the following disclaimer on the main Meraki Github page:
-This code is intended for example purposes only and is provided by Cisco Meraki “as is” without any warranty or support of any kind. We do not represent or warrant that this code is suitable for production use, will operate properly, is accurate or complete, or is without error or defect. This page also contains links to third party code repositories not associated with Cisco Meraki. We provide these links merely as a convenience and the inclusion of such links does not imply any endorsement of their content. All use is at your own risk.
-Please let me know if you have any questions or want me to review the CONTRIBUTING file before we publish.
+### LICENSE
+Apache 2.0 (see [LICENSE](./LICENSE) and [NOTICE](./NOTICE)).
